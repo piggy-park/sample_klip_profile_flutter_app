@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:sample_klip_profile_flutter_app/klip_profile_page.dart';
 import 'package:get/get.dart';

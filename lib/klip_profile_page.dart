@@ -24,7 +24,7 @@ class KlipProfilePage extends StatelessWidget {
             const SizedBox(height: 40),
             SelectedProfileImage(),
             const SizedBox(height: 16),
-            SelectableProfileImageGrid(),
+            const SelectableProfileImageGrid(),
           ],
         ),
       ),
@@ -102,40 +102,29 @@ class SelectedProfileImage extends GetView {
 }
 
 class SelectableProfileImageGrid extends StatelessWidget {
-  SelectableProfileImageGrid({super.key});
-
-  List<String> assetImageList = [
-    "images/atom/profile_default.png",
-    "images/atom/profile-setting.png",
-    "images/atom/profile-setting-1.png",
-    "images/atom/profile-setting-2.png",
-    "images/atom/profile-setting-3.png",
-    "images/atom/profile-setting-4.png",
-    "images/atom/profile-setting-5.png",
-    "images/atom/profile-setting-6.png",
-    "images/atom/profile-setting-7.png",
-    "images/atom/btn_uploadImage.png"
-  ];
+  const SelectableProfileImageGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: 10,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 12, crossAxisSpacing: 12, crossAxisCount: 5),
-      itemBuilder: (context, index) {
-        return SelectableProfileImage(
-          assetImagePath: assetImageList[index],
-        );
-      },
-    );
+    return GetBuilder<ProfilePageController>(builder: (_) {
+      return GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: _.assetImageList.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            mainAxisSpacing: 12, crossAxisSpacing: 12, crossAxisCount: 5),
+        itemBuilder: (context, index) {
+          return SelectableProfileImage(
+            assetImagePath: _.assetImageList[index],
+          );
+        },
+      );
+    });
   }
 }
 
 class SelectableProfileImage extends StatelessWidget {
-  String assetImagePath;
+  final String assetImagePath;
 
   SelectableProfileImage({
     super.key,
@@ -180,6 +169,19 @@ class SelectableProfileImage extends StatelessWidget {
 }
 
 class ProfilePageController extends GetxController {
+  final List<String> assetImageList = [
+    "images/atom/profile_default.png",
+    "images/atom/profile-setting.png",
+    "images/atom/profile-setting-1.png",
+    "images/atom/profile-setting-2.png",
+    "images/atom/profile-setting-3.png",
+    "images/atom/profile-setting-4.png",
+    "images/atom/profile-setting-5.png",
+    "images/atom/profile-setting-6.png",
+    "images/atom/profile-setting-7.png",
+    "images/atom/btn_uploadImage.png"
+  ];
+
   // default selected profile Image
   var selectedAssetImagePath = "images/atom/profile_default.png".obs;
   var croppedImageData = Uint8List(0).obs;

@@ -8,17 +8,9 @@ import 'package:sample_klip_profile_flutter_app/presentation/ui/text_style.dart'
 import 'package:sample_klip_profile_flutter_app/presentation/ui/color_style.dart';
 
 class CropImagePage extends StatelessWidget {
-  Uint8List imageData;
+  final Uint8List imageData;
   final cropController = CropController();
   final profilePageController = Get.find<ProfilePageController>();
-
-  var _isPreviewing = false;
-
-  set isPreviewing(bool value) {
-    // setState(() {
-    _isPreviewing = value;
-    // });
-  }
 
   CropImagePage({super.key, required this.imageData});
 
@@ -58,13 +50,9 @@ class CropImagePage extends StatelessWidget {
                         },
                         initialSize: 0.9,
                         cornerDotBuilder: (size, cornerIndex) {
-                          return _isPreviewing
-                              ? const SizedBox.shrink()
-                              : const DotControl();
+                          return const DotControl();
                         },
                         withCircleUi: true,
-                        // 크롭 뷰 주변 딤 색상
-                        maskColor: _isPreviewing ? Colors.white : null,
                         // 배경 색상
                         baseColor: Colors.black,
                       ),
@@ -79,8 +67,8 @@ class CropImagePage extends StatelessWidget {
 }
 
 class CropPageHeader extends StatelessWidget {
-  CropController cropController;
-  CropPageHeader({super.key, required this.cropController});
+  final CropController cropController;
+  const CropPageHeader({super.key, required this.cropController});
 
   @override
   Widget build(BuildContext context) {
