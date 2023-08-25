@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,6 +13,27 @@ class CropImagePage extends StatelessWidget {
 
   CropImagePage({super.key, required this.imageData});
 
+  void showImageSizeErrorPopup(
+      {required String title, required String content}) {
+    Get.dialog(AlertDialog(
+      title: Text(
+        title,
+        style: KlipTextStyle.K_18B.style(color: KlipColorStyle.Black.color()),
+      ),
+      content: Text(
+        content,
+        style: KlipTextStyle.K_15M.style(color: KlipColorStyle.Gray300.color()),
+      ),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Get.back(closeOverlays: true);
+            },
+            child: const Text("확인"))
+      ],
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,6 +46,7 @@ class CropImagePage extends StatelessWidget {
           children: [
             CropPageHeader(cropController: cropController),
             Visibility(
+              // 로딩화면 필요시 조건 추가해야함.
               visible: imageData.length > 2,
               // 로딩 화면
               replacement: const Center(child: CircularProgressIndicator()),
@@ -37,16 +58,19 @@ class CropImagePage extends StatelessWidget {
                         onCropped: (cropped) {
                           // crop한 이미지 controller에 넘기고 dismiss함.
                           var originSize =
-                              (imageData.lengthInBytes / 1024 / 1024)
-                                  .toStringAsFixed(2);
-                          var croppedSize =
-                              (cropped.lengthInBytes / 1024 / 1024)
-                                  .toStringAsFixed(2);
+                              imageData.lengthInBytes / 1024 / 1024;
+                          var croppedSize = cropped.lengthInBytes / 1024 / 1024;
                           print(
-                              "originSize: ${originSize}mb croppedSize: ${croppedSize}mb");
-                          profilePageController
-                              .setProfileWithCroppedImage(cropped);
-                          Get.back();
+                              "originSize: ${originSize.toStringAsFixed(2)}mb croppedSize: ${croppedSize.toStringAsFixed(2)}mb");
+                          if (croppedSize > 10) {
+                            showImageSizeErrorPopup(
+                                title: "업로드 용량을 초과했어요",
+                                content: "최대 10MB까지 올릴 수 있어요.");
+                          } else {
+                            profilePageController
+                                .setProfileWithCroppedImage(cropped);
+                            Get.back();
+                          }
                         },
                         initialSize: 0.9,
                         cornerDotBuilder: (size, cornerIndex) {
@@ -93,18 +117,16 @@ class CropPageHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent),
-                  onPressed: () {
-                    cropController.cropCircle();
-                  },
-                  child: Text(
-                    "완료",
-                    style: KlipTextStyle.K_16SB
-                        .style(color: KlipColorStyle.Gray300.color()),
-                  ))
+              GestureDetector(
+                onTap: () {
+                  cropController.cropCircle();
+                },
+                child: Text(
+                  "완료",
+                  style: KlipTextStyle.K_16SB
+                      .style(color: KlipColorStyle.Gray300.color()),
+                ),
+              )
             ],
           ),
         ),
