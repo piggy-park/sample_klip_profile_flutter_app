@@ -95,8 +95,12 @@ class SelectedProfileImage extends GetView {
           ),
         );
       }
-      // 그외 기본 프로필 이미지
-      return Image.asset(width: 96, height: 96, _.selectedAssetImagePath());
+      // 크롭이미지가 없다면, 그외 기본 프로필 이미지
+      return Image.asset(
+        width: 96,
+        height: 96,
+        _.selectedAssetImagePath(),
+      );
     });
   }
 }
@@ -107,17 +111,20 @@ class SelectableProfileImageGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProfilePageController>(builder: (_) {
-      return GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: _.assetImageList.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisSpacing: 12, crossAxisSpacing: 12, crossAxisCount: 5),
-        itemBuilder: (context, index) {
-          return SelectableProfileImage(
-            assetImagePath: _.assetImageList[index],
-          );
-        },
+      return Row(
+        children: [
+          Expanded(
+            child: Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                for (var imagePath in _.assetImageList)
+                  SelectableProfileImage(assetImagePath: imagePath),
+              ],
+            ),
+          ),
+        ],
       );
     });
   }
@@ -144,31 +151,43 @@ class SelectableProfileImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetX<ProfilePageController>(builder: (_) {
-      return Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(52)),
-            border: Border.all(
-                color: (_.selectedAssetImagePath.value == assetImagePath)
-                    ? KlipColorStyle.Blue.color()
-                    : Colors.transparent,
-                width:
-                    _.selectedAssetImagePath.value == assetImagePath ? 2 : 0),
+      return SizedBox(
+        width: 52,
+        height: 52,
+        child: GestureDetector(
+          onTap: () {
+            _pickImage();
+          },
+          child: Stack(
+            children: [
+              Center(
+                child: Image.asset(
+                  assetImagePath,
+                  fit: BoxFit.fill,
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(52)),
+                  border: Border.all(
+                      color: (_.selectedAssetImagePath.value == assetImagePath)
+                          ? KlipColorStyle.Blue.color()
+                          : Colors.transparent,
+                      width: _.selectedAssetImagePath.value == assetImagePath
+                          ? 2
+                          : 0),
+                ),
+              ),
+            ],
           ),
-          child: IconButton(
-            onPressed: _pickImage,
-            padding: EdgeInsets.zero,
-            icon: Image.asset(
-              assetImagePath,
-              width: 52,
-              height: 52,
-            ),
-          ));
+        ),
+      );
     });
   }
 }
 
 class ProfilePageController extends GetxController {
+  // 선택할 수 있는 기본 이미지 Assset path
   final List<String> assetImageList = [
     "images/atom/profile_default.png",
     "images/atom/profile-setting.png",
