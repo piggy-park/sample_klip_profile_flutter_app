@@ -115,7 +115,7 @@ class SelectableProfileImageGrid extends StatelessWidget {
         children: [
           Expanded(
             child: Wrap(
-              alignment: WrapAlignment.start,
+              // alignment: WrapAlignment.center,
               spacing: 12,
               runSpacing: 12,
               children: [

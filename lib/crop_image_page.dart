@@ -56,7 +56,7 @@ class CropImagePage extends StatelessWidget {
                         controller: cropController,
                         image: imageData,
                         onCropped: (cropped) {
-                          // crop한 이미지 controller에 넘기고 dismiss함.
+// crop한 이미지 controller에 넘기고 dismiss함.
                           var originSize =
                               imageData.lengthInBytes / 1024 / 1024;
                           var croppedSize = cropped.lengthInBytes / 1024 / 1024;
